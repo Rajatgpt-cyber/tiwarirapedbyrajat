@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rishav Prank - Perfect Alignment</title>
+    <style>
+        * { box-sizing: border-box; }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            background: #000;
+            font-family: 'Arial Black', sans-serif;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #game-stage {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1a1a1a;
+        }
+
+        #character-img {
+            max-height: 95%;
+            max-width: 95%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        /* Impact Visual - MOVED UP AGAIN */
+        #slap-flash {
+            position: absolute;
+            bottom: 31%; /* Increased from 26% to 31% to move higher */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(255, 0, 85, 0.8) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        #score-ui {
+            position: absolute;
+            top: 40px;
+            font-size: 5rem;
+            color: #fff;
+            text-shadow: 0 0 20px #ff0055;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        /* SMALL HAND - MOVED UP TO MATCH TARGET */
+        #hand {
+            position: absolute;
+            width: 125px; 
+            height: 95px;
+            background: #eebf87;
+            right: -200px;
+            bottom: 34%; /* Increased from 29% to 34% to align with the higher target */
+            z-index: 100;
+            border-radius: 20px 40px 40px 20px;
+            border: 3px solid #c68642;
+            box-shadow: -15px 15px 30px rgba(0,0,0,0.8);
+            pointer-events: none;
+            display: none;
+        }
+
+        #hand::after {
+            content: ''; position: absolute; top: -22px; left: 22px;
+            width: 32px; height: 55px; background: #eebf87;
+            border: 3px solid #c68642; border-radius: 10px;
+            transform: rotate(-35deg);
+        }
+
+        .animate-slap {
+            display: block !important;
+            animation: swing-to-butt 0.12s ease-out forwards;
+        }
+
+        @keyframes swing-to-butt {
+            0% { right: -200px; transform: rotate(15deg); }
+            50% { right: 35%; transform: rotate(-8deg) scale(1.1); } 
+            100% { right: -200px; transform: rotate(0deg); }
+        }
+
+        .impact-vibrate {
+            animation: heavy-shake 0.08s linear infinite;
+        }
+
+        @keyframes heavy-shake {
+            0% { transform: translate(7px, 7px); }
+            50% { transform: translate(-7px, -7px); }
+            100% { transform: translate(7px, -7px); }
+        }
+    </style>
+</head>
+<body onclick="slapNow(event)" ontouchstart="slapNow(event)">
+
+    <div id="game-stage">
+        <div id="score-ui">0</div>
+        
+        <img src="https://files.catbox.moe/vgamvn.jpg" id="character-img" alt="Rishav">
+        
+        <div id="slap-flash"></div>
+        <div id="hand"></div>
+    </div>
+
+    <script>
+        let score = 0;
+        // Using your uploaded audio file
+        const slapSound = new Audio('https://files.catbox.moe/g6spg1.mp3'); 
+
+        function slapNow(e) {
+            if(e) e.preventDefault();
+            
+            // Auto Full Screen for immersion
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            }
+
+            score++;
+            document.getElementById('score-ui').innerText = score;
+
+            const hand = document.getElementById('hand');
+            const img = document.getElementById('character-img');
+            const flash = document.getElementById('slap-flash');
+
+            hand.classList.remove('animate-slap');
+            void hand.offsetWidth;
+            hand.classList.add('animate-slap');
+
+            setTimeout(() => {
+                img.classList.add('impact-vibrate');
+                flash.style.opacity = "1";
+                
+                slapSound.currentTime = 0;
+                slapSound.play().catch(() => {});
+
+                setTimeout(() => {
+                    img.classList.remove('impact-vibrate');
+                    flash.style.opacity = "0";
+                }, 150);
+            }, 60);
+        }
+    </script>
+</body>
+</html>
